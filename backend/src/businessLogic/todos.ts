@@ -3,7 +3,8 @@ import { TodosAccess } from './todosAcess'
 // import { parseUserId } from '../auth/utils';
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-// import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { TodoUpdate } from '../models/TodoUpdate';
 // import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
 // import * as createError from 'http-errors'
@@ -11,12 +12,12 @@ import * as uuid from 'uuid'
 // TODO: Implement businessLogic
 const todoAccess = new TodosAccess()
 
-export async function getTodosForUser(userId): Promise<TodoItem[]> {
+export async function getTodosForUser(userId:string): Promise<TodoItem[]> {
   return todoAccess.getAllTodos(userId)
 }
 
 
-export function createTodo(createTodoRequest: CreateTodoRequest, userId): Promise<TodoItem> {
+export function createTodo(createTodoRequest: CreateTodoRequest, userId:string): Promise<TodoItem> {
     const todoId =  uuid();
     const s3BucketName = process.env.ATTACHMENT_S3_BUCKET;   //this was the source of this error, 'Missing required key 'Bucket' in params'
     
@@ -32,4 +33,12 @@ export function createTodo(createTodoRequest: CreateTodoRequest, userId): Promis
 
 export function generateUploadUrl(todoId: string): Promise<string> {
     return todoAccess.generateUploadUrl(todoId);
+}
+
+export function updateTodo(updateTodoRequest: UpdateTodoRequest, todoId: string, userId: string): Promise<TodoUpdate> {
+    return todoAccess.updateTodo(updateTodoRequest, todoId, userId);
+}
+
+export function deleteTodo(todoId: string, userId: string): Promise<string> {
+    return todoAccess.deleteTodo(todoId, userId);
 }
